@@ -77,32 +77,33 @@ def clean_tweet(tweet):
 
 #DIALO-GPT
 
-tokenizer = AutoTokenizer.from_pretrained("microsoft/DialoGPT-medium")
-model = AutoModelForCausalLM.from_pretrained("microsoft/DialoGPT-medium")
+def run_model(tweets):
+    #tweets is a list of tweet texts
+    tokenizer = AutoTokenizer.from_pretrained("microsoft/DialoGPT-medium")
+    model = AutoModelForCausalLM.from_pretrained("microsoft/DialoGPT-medium")
 
-df = pd.read_csv('./validation.csv').sample(500) #Replace with whatever csv file you wish to use, can also just directly provide the tweets as input here in loop
-tweets = df['full_text'].to_list()
+    output = []
+    count = 0
+    for tweet in tweets:
+        rgx = r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))"
+        checker = re.findall(rgx, tweet)
+        checker_list = [u[0] for u in checker]
+        if checker_list != []:
+            output.append('Template Response TBD')
+            continue
 
-output = []
-count = 0
-for tweet in tweets:
-  rgx = r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))"
-  checker = re.findall(rgx, tweet)
-  checker_list = [u[0] for u in checker]
-  if checker_list != []:
-    output.append('Template Response TBD')
-    continue
-
-  cleaned_tweet = clean_tweet(tweet)
-  new_user_input_ids = tokenizer.encode(cleaned_tweet + tokenizer.eos_token, return_tensors='pt')
-  bot_input_ids = new_user_input_ids
-  chat_history_ids = model.generate(bot_input_ids, max_length=1000, pad_token_id=tokenizer.eos_token_id, temperature=0.045, repetition_penalty=1.3)
-  output.append(tokenizer.decode(chat_history_ids[:, bot_input_ids.shape[-1]:][0], skip_special_tokens=True))
+        cleaned_tweet = clean_tweet(tweet)
+        new_user_input_ids = tokenizer.encode(cleaned_tweet + tokenizer.eos_token, return_tensors='pt')
+        bot_input_ids = new_user_input_ids
+        chat_history_ids = model.generate(bot_input_ids, max_length=1000, pad_token_id=tokenizer.eos_token_id, temperature=0.045, repetition_penalty=1.3)
+        output.append(tokenizer.decode(chat_history_ids[:, bot_input_ids.shape[-1]:][0], skip_special_tokens=True))
   
-  if is_faulty(cleaned_tweet, output[-1]):
-    count += 1
-    print(count, output[-1], cleaned_tweet)
-    output[-1] = "Template Response TBD"
+        if is_faulty(cleaned_tweet, output[-1]):
+        count += 1
+        print(count, output[-1], cleaned_tweet)
+        output[-1] = "Template Response TBD"
 
-res_df = pd.DataFrame({'original_tweet': tweets, 'generated_reply':output})
-res_df.to_csv('/content/generated_outputs_validation.csv', index=False)
+    #output is a list of responses the same length as tweets provided at input
+    return output
+
+# If you want to just provide one input to the above function, enclose it in a list as [tweet_text]
