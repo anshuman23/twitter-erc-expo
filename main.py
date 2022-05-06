@@ -77,10 +77,16 @@ def clean_tweet(tweet):
 
 #DIALO-GPT
 
-def run_model(tweets):
-    #tweets is a list of tweet texts
+def load_model():
     tokenizer = AutoTokenizer.from_pretrained("microsoft/DialoGPT-medium")
     model = AutoModelForCausalLM.from_pretrained("microsoft/DialoGPT-medium")
+
+    return tokenizer, model
+
+
+def run_model(tweets):
+    #tweets is a list of tweet texts
+    tokenizer, model = load_model()
 
     output = []
     count = 0
@@ -107,3 +113,4 @@ def run_model(tweets):
     return output
 
 # If you want to just provide one input to the above function, enclose it in a list as [tweet_text]
+# Call run_model
