@@ -84,9 +84,8 @@ def load_model():
     return tokenizer, model
 
 
-def run_model(tweets):
+def run_model(tweets, tokenizer, model):
     #tweets is a list of tweet texts
-    tokenizer, model = load_model()
 
     output = []
     count = 0
