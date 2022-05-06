@@ -104,12 +104,9 @@ def run_model(tweets, tokenizer, model):
         output.append(tokenizer.decode(chat_history_ids[:, bot_input_ids.shape[-1]:][0], skip_special_tokens=True))
   
         if is_faulty(cleaned_tweet, output[-1]):
-        count += 1
-        print(count, output[-1], cleaned_tweet)
-        output[-1] = "Template Response TBD"
+            count += 1
+            print(count, output[-1], cleaned_tweet)
+            output[-1] = "Template Response TBD"
 
     #output is a list of responses the same length as tweets provided at input
     return output
-
-# If you want to just provide one input to the above function, enclose it in a list as [tweet_text]
-# Call run_model
