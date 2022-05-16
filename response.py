@@ -16,7 +16,7 @@ finally:
 
 
 # Load template responses file
-template_responses = pd.read_csv('response_templates.csv')['templates'].to_list()
+response_templates = pd.read_csv('response_templates.csv')['templates'].to_list()
 
 
 
