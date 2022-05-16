@@ -3,7 +3,10 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 import torch
 import pandas as pd
 import re
+import random
 
+
+# Load stopwords file
 stop_file = open("stopwords.txt", "r")
 try:
     content = stop_file.read()
@@ -12,6 +15,12 @@ finally:
     stop_file.close()
 
 
+# Load template responses file
+template_responses = pd.read_csv('response_templates.csv')['templates'].to_list()
+
+
+
+# Function to check if response is unsatisfactory
 def is_faulty(original, response):
     
     # If original tweet and response generated are the same
@@ -94,7 +103,8 @@ def run_model(tweets, tokenizer, model):
         checker = re.findall(rgx, tweet)
         checker_list = [u[0] for u in checker]
         if checker_list != []:
-            output.append('Template Response TBD')
+            template_choice = random.choice(response_templates)
+            output.append(template_choice)
             continue
 
         cleaned_tweet = clean_tweet(tweet)
@@ -105,8 +115,9 @@ def run_model(tweets, tokenizer, model):
   
         if is_faulty(cleaned_tweet, output[-1]):
             count += 1
-            print(count, output[-1], cleaned_tweet)
-            output[-1] = "Template Response TBD"
+            #print(count, output[-1], cleaned_tweet)
+            template_choice = random.choice(response_templates)
+            output[-1] = template_choice
 
     #output is a list of responses the same length as tweets provided at input
     return output
