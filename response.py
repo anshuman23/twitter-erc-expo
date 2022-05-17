@@ -19,6 +19,12 @@ finally:
 response_templates = pd.read_csv('response_templates.csv')['templates'].to_list()
 
 
+# Load news templates and info
+news_templates = pd.read_csv('news_templates.csv')['templates'].to_list()
+sports_df = pd.read_csv('sports.csv')
+entertainment_df = pd.read_csv('entertainment.csv')
+lifestyle_df = pd.read_csv('lifestyle.csv')
+
 
 # Function to check if response is unsatisfactory
 def is_faulty(original, response):
@@ -121,3 +127,27 @@ def run_model(tweets, tokenizer, model):
 
     #output is a list of responses the same length as tweets provided at input
     return output
+
+
+def append_url(topic, response):
+    if topic == 'sports':
+        df = sports_df
+    elif topic == 'entertainment':
+        df = entertainment_df
+    elif topic == 'lifestyle':
+        df = lifestyle_df
+
+
+    sampled_df = df.sample(n=1)
+
+    random_template = random.choice(news_templates)
+    response = response.replace("topic", topic)
+    response = response.replace("@media", sampled_df['media'].to_list()[0])
+    response = response.replace("URL", sampled_df["url"].to_list()[0])
+
+    return response
+
+
+
+
+
