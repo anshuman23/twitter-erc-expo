@@ -18,7 +18,7 @@ def load_all_files():
     entertainment_df = pd.read_csv('entertainment.csv')
     lifestyle_df = pd.read_csv('lifestyle.csv')
 
-    return (response_templates, (news_templates, sports_df, entertainment_df, lifestyle_df))
+    return (response_templates, news_templates, sports_df, entertainment_df, lifestyle_df)
 
 
 
