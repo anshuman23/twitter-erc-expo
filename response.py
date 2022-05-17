@@ -6,29 +6,36 @@ import re
 import random
 
 
-# Load stopwords file
-stop_file = open("stopwords.txt", "r")
-try:
-    content = stop_file.read()
-    stop_words = content.split(",")
-finally:
-    stop_file.close()
+
+def load_all_files():
+    # Load template responses file
+    response_templates = pd.read_csv('response_templates.csv')['templates'].to_list()
 
 
-# Load template responses file
-response_templates = pd.read_csv('response_templates.csv')['templates'].to_list()
+    # Load news templates and info
+    news_templates = pd.read_csv('news_templates.csv')['templates'].to_list()
+    sports_df = pd.read_csv('sports.csv')
+    entertainment_df = pd.read_csv('entertainment.csv')
+    lifestyle_df = pd.read_csv('lifestyle.csv')
+
+    return (response_templates, (news_templates, sports_df, entertainment_df, lifestyle_df))
 
 
-# Load news templates and info
-news_templates = pd.read_csv('news_templates.csv')['templates'].to_list()
-sports_df = pd.read_csv('sports.csv')
-entertainment_df = pd.read_csv('entertainment.csv')
-lifestyle_df = pd.read_csv('lifestyle.csv')
 
 
 # Function to check if response is unsatisfactory
 def is_faulty(original, response):
-    
+
+    # Load stopwords file
+    stop_file = open("stopwords.txt", "r")
+    try:
+        content = stop_file.read()
+        stop_words = content.split(",")
+    finally:
+        stop_file.close()
+
+
+
     # If original tweet and response generated are the same
     if original == response:
       return True
@@ -99,7 +106,7 @@ def load_model():
     return tokenizer, model
 
 
-def run_model(tweets, tokenizer, model):
+def run_model(tweets, tokenizer, model, response_templates):
     #tweets is a list of tweet texts
 
     output = []
@@ -129,7 +136,7 @@ def run_model(tweets, tokenizer, model):
     return output
 
 
-def append_url(topic, response):
+def append_url(topic, response, news_templates, sports_df, entertainment_df, lifestyle_df):
     if topic == 'sports':
         df = sports_df
     elif topic == 'entertainment':
