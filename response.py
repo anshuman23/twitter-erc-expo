@@ -145,7 +145,9 @@ def append_url(topic, response, news_templates, sports_df, entertainment_df, lif
         df = lifestyle_df
 
 
-    sampled_df = df.sample(n=1)
+    sampled_df = df.sample(1)
+    print(sampled_df['media'].to_list()[0])
+    print(sampled_df['url'].to_list()[0])
 
     random_template = random.choice(news_templates)
     response = response.replace("topic", topic)
