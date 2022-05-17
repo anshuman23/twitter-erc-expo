@@ -1,4 +1,5 @@
 import response
+import random
 
 tokenizer, model = response.load_model()
 
@@ -14,3 +15,9 @@ tweets = [
 generated_responses = response.run_model(tweets, tokenizer, model)
 
 print(generated_responses)
+
+final_outputs = []
+for gen_resp in generated_responses:
+    topic = random.choice(['sports', 'entertainment', 'lifestyle'])
+    final_outputs.append(response.append_url(topic, gen_resp))
+print(final_outputs)
